@@ -2,9 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier><!-- Default runtime identifier when not specified from the CLI (e.g. launch from VS)-->
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier><!-- Build in VS fail if I don't set this, because of the RuntimeIdentifier set in ChildProcess.csproj -->
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChildProcess\ChildProcess.csproj" ReferenceOutputAssembly="false" OutputItemType="None" CopyToOutputDirectory="PreserveNewest" Targets="Publish" />
