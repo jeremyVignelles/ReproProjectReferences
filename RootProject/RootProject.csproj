@@ -2,9 +2,17 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier><!-- Build in VS fail if I don't set this, because of the RuntimeIdentifier set in ChildProcess.csproj -->
+    <IsPublishing>false</IsPublishing>
+    <IsPublishing Condition="'$(RuntimeIdentifier)' != ''">true</IsPublishing>
+    <RuntimeIdentifier Condition="'$(IsPublishing)' == 'false'">win-x64</RuntimeIdentifier><!-- Build in VS fail if I don't set this, because of the RuntimeIdentifier set in ChildProcess.csproj -->
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChildProcess\ChildProcess.csproj" ReferenceOutputAssembly="false" OutputItemType="None" CopyToOutputDirectory="PreserveNewest" Targets="Publish" />
+    <!-- Workaround for https://github.com/dotnet/msbuild/issues/7000 -->
+    <!-- Not sure I understand why it generates in different path depending on whether it is invoked via dotnet publish or VS ...-->
+    <!-- For publish -->
+    <None Condition="'$(IsPublishing)' == 'true'" Include="..\ChildProcess\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\publish\ChildProcess.dll" Visible="false" CopyToOutputDirectory="PreserveNewest"></None>
+    <!-- For dev -->
+    <None Condition="'$(IsPublishing)' == 'false'" Include="..\ChildProcess\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\ChildProcess.dll" Visible="false" CopyToOutputDirectory="PreserveNewest"></None>
   </ItemGroup>
 </Project>
