@@ -10,9 +10,9 @@
     <ProjectReference Include="..\ChildProcess\ChildProcess.csproj" ReferenceOutputAssembly="false" OutputItemType="None" CopyToOutputDirectory="PreserveNewest" Targets="Publish" />
     <!-- Workaround for https://github.com/dotnet/msbuild/issues/7000 -->
     <!-- Not sure I understand why it generates in different path depending on whether it is invoked via dotnet publish or VS ...-->
-    <!-- For publish -->
+    <!-- For publish, doesn't work in VS, because the publish folder doesn't get created. However, the .dll is properly copied into the output folder when building with VS -->
     <None Condition="'$(IsPublishing)' == 'true'" Include="..\ChildProcess\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\publish\ChildProcess.dll" Visible="false" CopyToOutputDirectory="PreserveNewest"></None>
-    <!-- For dev -->
+    <!-- For dotnet run to work -->
     <None Condition="'$(IsPublishing)' == 'false'" Include="..\ChildProcess\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\ChildProcess.dll" Visible="false" CopyToOutputDirectory="PreserveNewest"></None>
   </ItemGroup>
 </Project>
