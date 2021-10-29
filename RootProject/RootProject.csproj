@@ -1,18 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <IsPublishing>false</IsPublishing>
-    <IsPublishing Condition="'$(RuntimeIdentifier)' != ''">true</IsPublishing>
-    <RuntimeIdentifier Condition="'$(IsPublishing)' == 'false'">win-x64</RuntimeIdentifier><!-- Build in VS fail if I don't set this, because of the RuntimeIdentifier set in ChildProcess.csproj -->
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier><!-- Build in VS fail if I don't set this, because of the RuntimeIdentifier set in ChildProcess.csproj -->
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChildProcess\ChildProcess.csproj" ReferenceOutputAssembly="false" OutputItemType="None" CopyToOutputDirectory="PreserveNewest" Targets="Publish" />
-    <!-- Workaround for https://github.com/dotnet/msbuild/issues/7000 -->
-    <!-- Not sure I understand why it generates in different path depending on whether it is invoked via dotnet publish or VS ...-->
-    <!-- For publish, doesn't work in VS, because the publish folder doesn't get created. However, the .dll is properly copied into the output folder when building with VS -->
-    <None Condition="'$(IsPublishing)' == 'true'" Include="..\ChildProcess\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\publish\ChildProcess.dll" Visible="false" CopyToOutputDirectory="PreserveNewest"></None>
-    <!-- For dotnet run to work -->
-    <None Condition="'$(IsPublishing)' == 'false'" Include="..\ChildProcess\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\ChildProcess.dll" Visible="false" CopyToOutputDirectory="PreserveNewest"></None>
   </ItemGroup>
+  <!-- Workaround for https://github.com/dotnet/msbuild/issues/7000 -->
+  <Target Name="CopyChildProcess" BeforeTargets="AfterResolveReferences">
+    <ItemGroup>
+     <None Condition="Exists('..\ChildProcess\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\publish\ChildProcess.dll')" Include="..\ChildProcess\bin\$(Configuration)\$(TargetFramework)\$(RuntimeIdentifier)\publish\ChildProcess.dll" Visible="false" CopyToOutputDirectory="PreserveNewest"></None>
+    </ItemGroup>
+  </Target>
 </Project>
